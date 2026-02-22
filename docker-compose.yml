@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: greenlabs-postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: greenlabs
+      POSTGRES_PASSWORD: greenlabs_password
+      POSTGRES_DB: greenlabs_blog
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U greenlabs']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: greenlabs-pgadmin
+    restart: always
+    ports:
+      - '5050:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@greenlabs.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local

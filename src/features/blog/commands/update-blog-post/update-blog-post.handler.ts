@@ -1,0 +1,71 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateBlogPostCommand } from './update-blog-post.command';
+import { BlogPost, BlogStatus } from '../../domain/blog-post.entity';
+import { BlogPostRepository } from '../../repositories/blog-post.repository';
+
+@Injectable()
+export class UpdateBlogPostHandler {
+  constructor(private readonly blogPostRepository: BlogPostRepository) {}
+
+  async handle(command: UpdateBlogPostCommand): Promise<BlogPost> {
+    const existingPost = await this.blogPostRepository.findById(command.id);
+
+    if (!existingPost) {
+      throw new NotFoundException(`Blog post with ID ${command.id} not found`);
+    }
+
+    const updateData: Partial<BlogPost> = {};
+
+    if (command.title) {
+      updateData.title = command.title;
+      updateData.slug = this.generateSlug(command.title);
+    }
+    if (command.excerpt) updateData.excerpt = command.excerpt;
+    if (command.content) {
+      updateData.content = command.content;
+      const wordCount = command.content.split(/\s+/).length;
+      updateData.readingTime = Math.ceil(wordCount / 200);
+    }
+    if (command.featuredImage !== undefined)
+      updateData.featuredImage = command.featuredImage;
+    if (command.featuredImageAlt !== undefined)
+      updateData.featuredImageAlt = command.featuredImageAlt;
+    if (command.tags) updateData.tags = command.tags;
+    if (command.categories) updateData.categories = command.categories;
+    if (command.status) {
+      updateData.status = command.status;
+      if (
+        command.status === BlogStatus.PUBLISHED &&
+        !existingPost.publishedAt
+      ) {
+        updateData.publishedAt = new Date();
+      }
+    }
+    if (command.authorName) updateData.authorName = command.authorName;
+    if (command.authorEmail !== undefined)
+      updateData.authorEmail = command.authorEmail;
+    if (command.authorAvatar !== undefined)
+      updateData.authorAvatar = command.authorAvatar;
+    if (command.isFeatured !== undefined)
+      updateData.isFeatured = command.isFeatured;
+    if (command.seoTitle) updateData.seoTitle = command.seoTitle;
+    if (command.seoDescription)
+      updateData.seoDescription = command.seoDescription;
+    if (command.seoKeywords) updateData.seoKeywords = command.seoKeywords;
+
+    const updated = await this.blogPostRepository.update(
+      command.id,
+      updateData,
+    );
+    return updated!;
+  }
+
+  private generateSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+}
