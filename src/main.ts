@@ -37,6 +37,7 @@ async function bootstrap() {
     .addTag('Products', 'Product management endpoints')
     .addTag('Blog', 'Blog management endpoints')
     .addTag('CRM', 'Customer Relationship Management endpoints')
+    .addTag('Notifications', 'In-app notification management endpoints')
     .addBearerAuth(
       {
         type: 'http',

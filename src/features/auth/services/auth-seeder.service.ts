@@ -179,6 +179,31 @@ export class AuthSeederService implements OnModuleInit {
         action: 'read',
         description: 'Read customer activities',
       },
+      // Notification permissions
+      {
+        name: 'notification:create',
+        resource: 'notification',
+        action: 'create',
+        description: 'Create notifications',
+      },
+      {
+        name: 'notification:read',
+        resource: 'notification',
+        action: 'read',
+        description: 'Read notifications',
+      },
+      {
+        name: 'notification:update',
+        resource: 'notification',
+        action: 'update',
+        description: 'Update notifications',
+      },
+      {
+        name: 'notification:delete',
+        resource: 'notification',
+        action: 'delete',
+        description: 'Delete notifications',
+      },
     ];
 
     for (const permData of permissions) {

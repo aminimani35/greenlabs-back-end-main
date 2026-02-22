@@ -8,6 +8,7 @@ import { UsersModule } from './features/users/users.module';
 import { ProductsModule } from './features/products/products.module';
 import { BlogModule } from './features/blog/blog.module';
 import { CrmModule } from './features/crm/crm.module';
+import { NotificationModule } from './features/notifications/notification.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CrmModule } from './features/crm/crm.module';
     ProductsModule,
     BlogModule,
     CrmModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
