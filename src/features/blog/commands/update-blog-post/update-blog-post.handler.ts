@@ -2,10 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateBlogPostCommand } from './update-blog-post.command';
 import { BlogPost, BlogStatus } from '../../domain/blog-post.entity';
 import { BlogPostRepository } from '../../repositories/blog-post.repository';
+import { BlogCategoryService } from '../../services/blog-category.service';
+import { BlogTagService } from '../../services/blog-tag.service';
 
 @Injectable()
 export class UpdateBlogPostHandler {
-  constructor(private readonly blogPostRepository: BlogPostRepository) {}
+  constructor(
+    private readonly blogPostRepository: BlogPostRepository,
+    private readonly categoryService: BlogCategoryService,
+    private readonly tagService: BlogTagService,
+  ) {}
 
   async handle(command: UpdateBlogPostCommand): Promise<BlogPost> {
     const existingPost = await this.blogPostRepository.findById(command.id);
@@ -30,8 +36,23 @@ export class UpdateBlogPostHandler {
       updateData.featuredImage = command.featuredImage;
     if (command.featuredImageAlt !== undefined)
       updateData.featuredImageAlt = command.featuredImageAlt;
-    if (command.tags) updateData.tags = command.tags;
-    if (command.categories) updateData.categories = command.categories;
+
+    // Handle tags
+    if (command.tagIds !== undefined) {
+      updateData.tags =
+        command.tagIds.length > 0
+          ? await this.tagService.findByIds(command.tagIds)
+          : [];
+    }
+
+    // Handle categories
+    if (command.categoryIds !== undefined) {
+      updateData.categories =
+        command.categoryIds.length > 0
+          ? await this.categoryService.findByIds(command.categoryIds)
+          : [];
+    }
+
     if (command.status) {
       updateData.status = command.status;
       if (

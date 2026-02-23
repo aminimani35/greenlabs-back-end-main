@@ -20,10 +20,10 @@ export class CreateBlogPostDto {
     minLength: 3,
     maxLength: 255,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(255)
+  @IsString({ message: 'Title must be a string' })
+  @IsNotEmpty({ message: 'Title is required' })
+  @MinLength(3, { message: 'Title must be at least 3 characters long' })
+  @MaxLength(255, { message: 'Title must not exceed 255 characters' })
   title: string;
 
   @ApiProperty({
@@ -33,18 +33,18 @@ export class CreateBlogPostDto {
     minLength: 10,
     maxLength: 500,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(10)
-  @MaxLength(500)
+  @IsString({ message: 'Excerpt must be a string' })
+  @IsNotEmpty({ message: 'Excerpt is required' })
+  @MinLength(10, { message: 'Excerpt must be at least 10 characters long' })
+  @MaxLength(500, { message: 'Excerpt must not exceed 500 characters' })
   excerpt: string;
 
   @ApiProperty({
     description: 'Full blog post content (supports Markdown)',
     example: '# Introduction\n\nThis is the full content of the blog post...',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Content must be a string' })
+  @IsNotEmpty({ message: 'Content is required' })
   content: string;
 
   @ApiPropertyOptional({
@@ -52,7 +52,7 @@ export class CreateBlogPostDto {
     example:
       'https://res.cloudinary.com/demo/image/upload/v1234567890/sample.jpg',
   })
-  @IsUrl()
+  @IsUrl({}, { message: 'Featured image must be a valid URL' })
   @IsOptional()
   featuredImage?: string;
 
@@ -60,7 +60,7 @@ export class CreateBlogPostDto {
     description: 'Alt text for featured image',
     example: 'Diagram showing vertical slice architecture',
   })
-  @IsString()
+  @IsString({ message: 'Featured image alt text must be a string' })
   @IsOptional()
   featuredImageAlt?: string;
 
@@ -69,7 +69,7 @@ export class CreateBlogPostDto {
     example: ['architecture', 'nestjs', 'typescript'],
     type: [String],
   })
-  @IsArray()
+  @IsArray({ message: 'Tags must be an array' })
   @IsOptional()
   tags?: string[];
 
@@ -78,7 +78,7 @@ export class CreateBlogPostDto {
     example: ['Engineering', 'Best Practices'],
     type: [String],
   })
-  @IsArray()
+  @IsArray({ message: 'Categories must be an array' })
   @IsOptional()
   categories?: string[];
 
@@ -87,7 +87,9 @@ export class CreateBlogPostDto {
     enum: BlogStatus,
     example: BlogStatus.DRAFT,
   })
-  @IsEnum(BlogStatus)
+  @IsEnum(BlogStatus, {
+    message: 'Status must be either draft, published, or archived',
+  })
   @IsOptional()
   status?: BlogStatus;
 
@@ -95,15 +97,15 @@ export class CreateBlogPostDto {
     description: 'Author name',
     example: 'John Doe',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Author name must be a string' })
+  @IsNotEmpty({ message: 'Author name is required' })
   authorName: string;
 
   @ApiPropertyOptional({
     description: 'Author email',
     example: 'john.doe@greenlabs.com',
   })
-  @IsEmail()
+  @IsEmail({}, { message: 'Author email must be a valid email address' })
   @IsOptional()
   authorEmail?: string;
 
@@ -112,7 +114,7 @@ export class CreateBlogPostDto {
     example:
       'https://res.cloudinary.com/demo/image/upload/v1234567890/avatar.jpg',
   })
-  @IsUrl()
+  @IsUrl({}, { message: 'Author avatar must be a valid URL' })
   @IsOptional()
   authorAvatar?: string;
 
@@ -120,7 +122,7 @@ export class CreateBlogPostDto {
     description: 'Mark as featured post',
     example: false,
   })
-  @IsBoolean()
+  @IsBoolean({ message: 'isFeatured must be a boolean value' })
   @IsOptional()
   isFeatured?: boolean;
 
@@ -128,7 +130,7 @@ export class CreateBlogPostDto {
     description: 'SEO optimized title',
     example: 'Vertical Slice Architecture Guide | GreenLabs Blog',
   })
-  @IsString()
+  @IsString({ message: 'SEO title must be a string' })
   @IsOptional()
   seoTitle?: string;
 
@@ -137,7 +139,7 @@ export class CreateBlogPostDto {
     example:
       'Complete guide to implementing vertical slice architecture in your NestJS applications',
   })
-  @IsString()
+  @IsString({ message: 'SEO description must be a string' })
   @IsOptional()
   seoDescription?: string;
 
@@ -146,7 +148,7 @@ export class CreateBlogPostDto {
     example: ['vertical slice', 'architecture', 'nestjs', 'cqrs'],
     type: [String],
   })
-  @IsArray()
+  @IsArray({ message: 'SEO keywords must be an array' })
   @IsOptional()
   seoKeywords?: string[];
 }

@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse as SwaggerApiResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiController } from '../../common/decorators/api-controller.decorator';
 import { ApiResponse } from '../../common/interfaces/base-response.interface';
@@ -14,6 +15,7 @@ import { GetProductQuery } from './queries/get-product/get-product.query';
 import { CreateProductCommand } from './commands/create-product/create-product.command';
 
 @ApiTags('Products')
+@ApiBearerAuth('JWT-auth')
 @ApiController('products')
 export class ProductsController {
   constructor(

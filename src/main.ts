@@ -20,7 +20,10 @@ async function bootstrap() {
   );
 
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+  });
 
   // Global prefix
   app.setGlobalPrefix('api');
@@ -32,23 +35,8 @@ async function bootstrap() {
       'API documentation for Greenlabs backend with Vertical Slice Architecture',
     )
     .setVersion('1.0')
-    .addTag('Authentication', 'Authentication and authorization endpoints')
     .addTag('Users', 'User management endpoints')
     .addTag('Products', 'Product management endpoints')
-    .addTag('Blog', 'Blog management endpoints')
-    .addTag('CRM', 'Customer Relationship Management endpoints')
-    .addTag('Notifications', 'In-app notification management endpoints')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse as SwaggerApiResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiController } from '../../common/decorators/api-controller.decorator';
 import { ApiResponse } from '../../common/interfaces/base-response.interface';
@@ -19,6 +20,7 @@ import { UpdateUserCommand } from './commands/update-user/update-user.command';
 import { DeleteUserCommand } from './commands/delete-user/delete-user.command';
 
 @ApiTags('Users')
+@ApiBearerAuth('JWT-auth')
 @ApiController('users')
 export class UsersController {
   constructor(
