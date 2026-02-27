@@ -6,32 +6,53 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
 import { Role } from '../../auth/domain/role.entity';
+import { Customer } from '../../crm/domain/customer.entity';
+
+export enum UserType {
+  STAFF = 'staff',
+  CUSTOMER = 'customer',
+}
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 255, unique: true })
+  @Column({ unique: true })
   email: string;
 
-  @Column({ length: 255 })
+  @Column()
   name: string;
 
   @Column()
-  @Exclude()
   password: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({
+    type: 'enum',
+    enum: UserType,
+    default: UserType.STAFF,
+    name: 'user_type',
+  })
+  userType: UserType;
+
+  @Column({ nullable: true, name: 'customer_id' })
+  customerId: string;
+
+  @OneToOne(() => Customer, { nullable: true })
+  @JoinColumn({ name: 'customer_id' })
+  customer: Customer;
+
+  @Column({ default: true })
   isActive: boolean;
 
-  @Column({ name: 'is_email_verified', default: false })
+  @Column({ default: false, name: 'is_email_verified' })
   isEmailVerified: boolean;
 
-  @Column({ name: 'last_login_at', nullable: true })
+  @Column({ nullable: true, name: 'last_login_at' })
   lastLoginAt: Date;
 
   @ManyToMany(() => Role, { eager: true })

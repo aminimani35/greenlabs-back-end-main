@@ -15,7 +15,7 @@ export class ProductRepository {
   }
 
   async create(product: Partial<Product>): Promise<Product> {
-    const newProduct = new Product({
+    const newProduct = Object.assign(new Product(), {
       id: (this.idCounter++).toString(),
       ...product,
       createdAt: new Date(),

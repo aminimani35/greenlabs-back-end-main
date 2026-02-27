@@ -35,8 +35,25 @@ async function bootstrap() {
       'API documentation for Greenlabs backend with Vertical Slice Architecture',
     )
     .setVersion('1.0')
+    .addTag('Authentication', 'Authentication and authorization endpoints')
     .addTag('Users', 'User management endpoints')
-    .addTag('Products', 'Product management endpoints')
+    .addTag('Products', 'Software product management endpoints')
+    .addTag('Licenses', 'License management and validation endpoints')
+    .addTag('Blog', 'Blog management endpoints')
+    .addTag('CRM', 'Customer relationship management endpoints')
+    .addTag('Projects', 'Customer project and subscription management')
+    .addTag('Notifications', 'Notification management endpoints')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

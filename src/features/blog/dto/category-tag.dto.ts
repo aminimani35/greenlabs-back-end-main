@@ -33,7 +33,9 @@ export class CreateBlogCategoryDto {
   @ApiPropertyOptional({ example: '#3498db' })
   @IsString({ message: 'Color must be a string' })
   @IsOptional()
-  @Matches(/^#[0-9A-Fa-f]{6}$/, { message: 'Color must be a valid hex color code (e.g., #3498db)' })
+  @Matches(/^#[0-9A-Fa-f]{6}$/, {
+    message: 'Color must be a valid hex color code (e.g., #3498db)',
+  })
   color?: string;
 
   @ApiPropertyOptional({ example: 'tech-icon' })

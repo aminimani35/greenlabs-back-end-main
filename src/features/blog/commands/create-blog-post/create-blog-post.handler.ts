@@ -2,16 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateBlogPostCommand } from './create-blog-post.command';
 import { BlogPost, BlogStatus } from '../../domain/blog-post.entity';
 import { BlogPostRepository } from '../../repositories/blog-post.repository';
-import { BlogCategoryService } from '../../services/blog-category.service';
-import { BlogTagService } from '../../services/blog-tag.service';
 
 @Injectable()
 export class CreateBlogPostHandler {
-  constructor(
-    private readonly blogPostRepository: BlogPostRepository,
-    private readonly categoryService: BlogCategoryService,
-    private readonly tagService: BlogTagService,
-  ) {}
+  constructor(private readonly blogPostRepository: BlogPostRepository) {}
 
   async handle(command: CreateBlogPostCommand): Promise<BlogPost> {
     // Generate slug from title
@@ -21,14 +15,6 @@ export class CreateBlogPostHandler {
     const wordCount = command.content.split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / 200);
 
-    // Fetch categories and tags
-    const categories = command.categoryIds
-      ? await this.categoryService.findByIds(command.categoryIds)
-      : [];
-    const tags = command.tagIds
-      ? await this.tagService.findByIds(command.tagIds)
-      : [];
-
     const blogPost = await this.blogPostRepository.create({
       title: command.title,
       slug,
@@ -36,8 +22,8 @@ export class CreateBlogPostHandler {
       content: command.content,
       featuredImage: command.featuredImage,
       featuredImageAlt: command.featuredImageAlt,
-      tags,
-      categories,
+      tags: command.tags || [],
+      categories: command.categories || [],
       status: command.status || BlogStatus.DRAFT,
       authorName: command.authorName,
       authorEmail: command.authorEmail,
@@ -46,7 +32,7 @@ export class CreateBlogPostHandler {
       readingTime,
       seoTitle: command.seoTitle || command.title,
       seoDescription: command.seoDescription || command.excerpt,
-      seoKeywords: command.seoKeywords || [],
+      seoKeywords: command.seoKeywords || command.tags,
       publishedAt: command.status === BlogStatus.PUBLISHED ? new Date() : null,
     });
 

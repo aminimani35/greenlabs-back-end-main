@@ -4,11 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
-import { BlogCategory } from './blog-category.entity';
-import { BlogTag } from './blog-tag.entity';
 
 export enum BlogStatus {
   DRAFT = 'draft',
@@ -39,23 +35,11 @@ export class BlogPost {
   @Column({ name: 'featured_image_alt', nullable: true, length: 255 })
   featuredImageAlt: string;
 
-  @ManyToMany(() => BlogTag, (tag) => tag.posts, { eager: true })
-  @JoinTable({
-    name: 'blog_post_tags',
-    joinColumn: { name: 'post_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
-  })
-  tags: BlogTag[];
+  @Column({ type: 'simple-array', nullable: true })
+  tags: string[];
 
-  @ManyToMany(() => BlogCategory, (category) => category.posts, {
-    eager: true,
-  })
-  @JoinTable({
-    name: 'blog_post_categories',
-    joinColumn: { name: 'post_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
-  })
-  categories: BlogCategory[];
+  @Column({ type: 'simple-array', nullable: true })
+  categories: string[];
 
   @Column({
     type: 'enum',

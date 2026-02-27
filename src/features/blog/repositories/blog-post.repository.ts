@@ -97,23 +97,19 @@ export class BlogPostRepository {
 
   async getAllTags(): Promise<string[]> {
     const posts = await this.repository.find({
-      relations: ['tags'],
+      select: ['tags'],
       where: { status: BlogStatus.PUBLISHED },
     });
-    const allTags = posts.flatMap(
-      (post) => post.tags?.map((tag) => tag.name) || [],
-    );
+    const allTags = posts.flatMap((post) => post.tags || []);
     return [...new Set(allTags)].sort();
   }
 
   async getAllCategories(): Promise<string[]> {
     const posts = await this.repository.find({
-      relations: ['categories'],
+      select: ['categories'],
       where: { status: BlogStatus.PUBLISHED },
     });
-    const allCategories = posts.flatMap(
-      (post) => post.categories?.map((cat) => cat.name) || [],
-    );
+    const allCategories = posts.flatMap((post) => post.categories || []);
     return [...new Set(allCategories)].sort();
   }
 }

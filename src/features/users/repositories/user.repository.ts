@@ -1,39 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from '../domain/user.entity';
 
 @Injectable()
 export class UserRepository {
-  constructor(
-    @InjectRepository(User)
-    private readonly repository: Repository<User>,
-  ) {}
+  // In-memory storage for demo purposes
+  // Replace with actual database implementation (TypeORM, Prisma, etc.)
+  private users: User[] = [];
+  private idCounter = 1;
 
   async findAll(): Promise<User[]> {
-    return this.repository.find();
+    return this.users;
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.repository.findOne({ where: { id } });
+    return this.users.find((user) => user.id === id) || null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.repository.findOne({ where: { email } });
+    return this.users.find((user) => user.email === email) || null;
   }
 
   async create(user: Partial<User>): Promise<User> {
-    const newUser = this.repository.create(user);
-    return this.repository.save(newUser);
+    const newUser = Object.assign(new User(), {
+      id: (this.idCounter++).toString(),
+      ...user,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    this.users.push(newUser);
+    return newUser;
   }
 
   async update(id: string, userData: Partial<User>): Promise<User | null> {
-    await this.repository.update(id, userData);
-    return this.findById(id);
+    const index = this.users.findIndex((user) => user.id === id);
+    if (index === -1) return null;
+
+    this.users[index] = {
+      ...this.users[index],
+      ...userData,
+      updatedAt: new Date(),
+    };
+    return this.users[index];
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.repository.delete(id);
-    return result.affected > 0;
+    const index = this.users.findIndex((user) => user.id === id);
+    if (index === -1) return false;
+
+    this.users.splice(index, 1);
+    return true;
   }
 }
